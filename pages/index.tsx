@@ -41,7 +41,9 @@ const Home = (props: PropsPokemon) => {
       front_default: "",
       front_shiny: "",
     },
+    types: [
 
+    ],
     weight: 0,
   });
 
@@ -81,7 +83,7 @@ const Home = (props: PropsPokemon) => {
   console.log('pokemones del estado', pokemones)
 
   const searchPokemon = () => {
-    setPokemones(pokemones.filter((pokemon: PokemonData) => hasNameOrId(search, pokemon)))
+    setPokemones(pokemones.filter((pokemon: any) => hasNameOrId(search, pokemon)))
   }
 
   /**
@@ -170,36 +172,13 @@ const Home = (props: PropsPokemon) => {
     }
   };
 
+  /**
+   * @name selectPokemon
+   * @description set the selected pokemon into the state
+   * @param {Number} id pokemon id
+   */
   const selectPokemon = (id: number) => {
-    setSelectPoke(pokemones.filter(pokemon => pokemon.id == id)[0]);
-  }
-
-  const fetchSelectedPokemonId = async (id: number) => {
-    try {
-      const res = await fetch(`https://pokeapi.co/api/v2/pokemon${id}`);
-      const data = await res.json();
-
-      setSelectPoke({
-        height: data.height,
-        id: data.id,
-        name: data.name,
-        order: data.order,
-        species: {
-          name: data.species.name,
-        },
-        sprites: {
-          back_default: data.sprites.back_default,
-          back_shiny: data.sprites.back_shiny,
-          front_default: data.sprites.front_default,
-          front_shiny: data.sprites.front_shiny,
-        },
-        weight: data.weight,
-
-      })
-
-    } catch (error) {
-      return error
-    }
+    setSelectPoke(pokemones.find((pokemon: any) => pokemon.id == id) || selectPoke);
   }
 
 
@@ -242,32 +221,34 @@ const Home = (props: PropsPokemon) => {
         }}></button>
         <div className={styleModal.container}>
           <div className={styleModal.cardImg}>
-            <img src='' alt="" />
+            <img src={`https://pokeres.bastionbot.org/images/pokemon/${selectPoke.id}.png`} alt="Pokemon Image" />
             <div>
-              <img src={selectPoke.character.sprites.front_default} alt="" />
-              <img src={selectPoke.character.sprites.back_default} alt="" />
+              <img src={selectPoke.sprites.front_default} alt="" />
+              <img src={selectPoke.sprites.back_default} alt="" />
             </div>
           </div>
           <div className={styleModal.dataPoke}>
-            <h1>{selectPoke.character.name}</h1>
-            <h3>types poke</h3>
+            <h1>{selectPoke.name}</h1>
+            {selectPoke.types.map((pokeType: PokeTypes) => (<h3 className={styles.typeColor} style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
+              {pokeType.type.name}
+            </h3>))}
             <div>
               <h3>Pokedex Number</h3>
-              <p>{selectPoke.character.id}</p>
+              <p>{selectPoke.id}</p>
             </div>
             <div>
               <h3>Height</h3>
-              <p>{selectPoke.character.height}</p>
+              <p>{selectPoke.height}</p>
             </div>
             <div>
               <h3>Weight</h3>
-              <p>{selectPoke.character.weight}</p>
+              <p>{selectPoke.weight}</p>
             </div>
             <div>
               <h3>Shiny</h3>
               <div>
-                <img src={selectPoke.character.sprites.front_shiny} alt="" />
-                <img src={selectPoke.character.sprites.back_shiny} alt="" />
+                <img src={selectPoke.sprites.front_shiny} alt="" />
+                <img src={selectPoke.sprites.back_shiny} alt="" />
               </div>
             </div>
           </div>
@@ -289,12 +270,11 @@ const Home = (props: PropsPokemon) => {
           </button>
         </div>
         <div className={styles.containerPokemon} >
-          {pokemones.map((result: PokemonData) => {
+          {pokemones.map((result: any) => {
             return (
               <div key={result.id} className={styles.cardPokemon} onClick={() => {
                 setShowModal(!showModal);
-                setPokemonId(result.id);
-                fetchSelectedPokemonId(result.id)
+                selectPokemon(result.id)
               }}>
                 <div>
                   <h2>{result.name}</h2>
