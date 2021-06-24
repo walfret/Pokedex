@@ -15,7 +15,6 @@ const Home = (props: PropsPokemon) => {
   const [show, setShow] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
-  const [pokemonId, setPokemonId] = useState(0)
   const [pokemones, setPokemones] = useState([{
     height: 0,
     name: '',
@@ -56,6 +55,10 @@ const Home = (props: PropsPokemon) => {
   })
 
 
+  /**
+  * @name getPokemonData
+  * @description get all pokemon data from api with pokemon result
+  */
   const getPokemonData = async (pokemones: PokemonResult[]) => {
     try {
       const newPokemons = await Promise.all(pokemones.map(async (pokemon: PokemonResult) => {
@@ -63,8 +66,6 @@ const Home = (props: PropsPokemon) => {
         const obj = await getPokemon.json();
         return obj
       }));
-
-      console.log('NEW ->', newPokemons);
 
       setPokemones(newPokemons);
     } catch (error) {
@@ -80,8 +81,12 @@ const Home = (props: PropsPokemon) => {
     })
   }, [])
 
-  console.log('pokemones del estado', pokemones)
 
+  /**
+  * @name searchPokemon
+  * @description search pokemon filtering array of pokemones and change the state
+  * @param {Number} id pokemon id
+  */
   const searchPokemon = () => {
     setPokemones(pokemones.filter((pokemon: any) => hasNameOrId(search, pokemon)))
   }
@@ -181,20 +186,6 @@ const Home = (props: PropsPokemon) => {
     setSelectPoke(pokemones.find((pokemon: any) => pokemon.id == id) || selectPoke);
   }
 
-
-  /*   const buttonCharacters = () => {
-      if (this.state.nextPage <= 34) {
-        return (
-          <button
-            className={styles.buttonFetch}
-            onClick={() => this.fetchCharacters()}
-          >
-            Ver mas personajes
-          </button>
-        );
-      }
-    };  */
-
   return (
     <div className={styles.container}>
       <Head>
@@ -216,9 +207,20 @@ const Home = (props: PropsPokemon) => {
         </div>
       </div>
       <Modal showModal={showModal}>
-        <button className={styleModal.btn} type='button' onClick={() => {
-          setShowModal(!showModal);
-        }}></button>
+        <div className={styleModal.containerBtns}>
+          <button className={styleModal.btn} type='button' onClick={() => {
+            setShowModal(!showModal);
+          }}></button>
+          <div className={styleModal.inputSearch}>
+            <input type="text" placeholder="Search" value={search} onChange={({ target }) => setSearch(target.value)} />
+            <button type="button" onClick={() => {
+              searchPokemon();
+              setShowModal(!showModal);
+            }} >
+              <img src="/Search.svg" alt="" />
+            </button>
+          </div>
+        </div>
         <div className={styleModal.container}>
           <div className={styleModal.cardImg}>
             <img src={`https://pokeres.bastionbot.org/images/pokemon/${selectPoke.id}.png`} alt="Pokemon Image" />
@@ -274,21 +276,24 @@ const Home = (props: PropsPokemon) => {
         <div className={styles.containerPokemon} >
           {pokemones.map((result: any) => {
             return (
-              <div key={result.id} className={styles.cardPokemon} onClick={() => {
-                setShowModal(!showModal);
-                selectPokemon(result.id)
-              }}>
-                <div>
-                  <h2>{result.name}</h2>
-                  <p>{result.id}</p>
-                  <img src={`https://pokeres.bastionbot.org/images/pokemon/${result.id}.png`} alt="Pokemon img" />
-                  <div className={styles.containerTypes}>
-                    {result.types.map((pokeType: PokeTypes) => (<h3 className={styles.typeColor} style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
-                      {pokeType.type.name}
-                    </h3>))}
+              <a href='#modal'>
+                <div key={result.id} className={styles.cardPokemon} onClick={() => {
+                  setShowModal(!showModal);
+                  selectPokemon(result.id)
+                }}>
+                  <div>
+                    <h2>{result.name}</h2>
+                    <p>{result.id}</p>
+                    <img src={`https://pokeres.bastionbot.org/images/pokemon/${result.id}.png`} alt="Pokemon img" />
+                    <div className={styles.containerTypes}>
+                      {result.types.map((pokeType: PokeTypes) => (<h3 className={styles.typeColor} style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
+                        {pokeType.type.name}
+                      </h3>))}
+                    </div>
                   </div>
                 </div>
-              </div>)
+              </a>
+            )
           })}
         </div>
       </main>
