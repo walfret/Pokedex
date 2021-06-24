@@ -49,11 +49,8 @@ const Home = (props: PropsPokemon) => {
   const [gState, setGState] = useState({
     next: "",
     previous: "",
-    data: {
-      results: [],
-    },
+    results: [],
   })
-
 
   /**
   * @name getPokemonData
@@ -80,7 +77,6 @@ const Home = (props: PropsPokemon) => {
       next: props.pokemones.next
     })
   }, [])
-
 
   /**
   * @name searchPokemon
@@ -159,24 +155,6 @@ const Home = (props: PropsPokemon) => {
     }
   }
 
-  const fetchMoreCharacters = async () => {
-    try {
-      const response = await fetch(`${gState.next}`);
-      const data = await response.json();
-
-      console.log(data, gState.next)
-
-      /*    setState({
-           data: {
-             info: data.info,
-             results: [].concat(state.data.results, data.results),
-           },
-          }); */
-    } catch (error) {
-      return error
-    }
-  };
-
   /**
    * @name selectPokemon
    * @description set the selected pokemon into the state
@@ -187,7 +165,7 @@ const Home = (props: PropsPokemon) => {
   }
 
   return (
-    <div className={styles.container}>
+    <div id="inicio" className={styles.container}>
       <Head>
         <title>Pokedex</title>
         <link rel="icon" href="/favicon.ico" />
@@ -208,9 +186,11 @@ const Home = (props: PropsPokemon) => {
       </div>
       <Modal showModal={showModal}>
         <div className={styleModal.containerBtns}>
-          <button className={styleModal.btn} type='button' onClick={() => {
-            setShowModal(!showModal);
-          }}></button>
+          <a href="#inicio">
+            <button className={styleModal.btn} type='button' onClick={() => {
+              setShowModal(!showModal);
+            }}></button>
+          </a>
           <div className={styleModal.inputSearch}>
             <input type="text" placeholder="Search" value={search} onChange={({ target }) => setSearch(target.value)} />
             <button type="button" onClick={() => {
@@ -276,7 +256,7 @@ const Home = (props: PropsPokemon) => {
         <div className={styles.containerPokemon} >
           {pokemones.map((result: any) => {
             return (
-              <a href='#modal'>
+              <a href='#modal' key={result.id}>
                 <div key={result.id} className={styles.cardPokemon} onClick={() => {
                   setShowModal(!showModal);
                   selectPokemon(result.id)
@@ -284,7 +264,7 @@ const Home = (props: PropsPokemon) => {
                   <div>
                     <h2>{result.name}</h2>
                     <p>{result.id}</p>
-                    <img src={`https://pokeres.bastionbot.org/images/pokemon/${result.id}.png`} alt="Pokemon img" />
+                    <img src={`https://pokeres.bastionbot.org/images/pokemon/${result.id}.png`} alt={`Img ${result.name}`} />
                     <div className={styles.containerTypes}>
                       {result.types.map((pokeType: PokeTypes) => (<h3 className={styles.typeColor} style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
                         {pokeType.type.name}
@@ -296,13 +276,17 @@ const Home = (props: PropsPokemon) => {
             )
           })}
         </div>
+        {/* <div className={styles.pagination}>
+          <div>Pag Anterior</div>
+          <div onClick={moreCharacters}>Pag Siguiente</div>
+        </div> */}
       </main>
     </div>
   );
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon`);
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon?offset=0&limit=1118`);
   const data = await res.json();
 
   if (!data) {
