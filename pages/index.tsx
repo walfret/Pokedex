@@ -216,36 +216,38 @@ const Home = (props: PropsPokemon) => {
         </div>
       </div>
       <Modal showModal={showModal}>
-        <button type='button' onClick={() => {
+        <button className={styleModal.btn} type='button' onClick={() => {
           setShowModal(!showModal);
         }}></button>
         <div className={styleModal.container}>
           <div className={styleModal.cardImg}>
             <img src={`https://pokeres.bastionbot.org/images/pokemon/${selectPoke.id}.png`} alt="Pokemon Image" />
-            <div>
+            <div className={styleModal.imgFrontBack}>
               <img src={selectPoke.sprites.front_default} alt="" />
               <img src={selectPoke.sprites.back_default} alt="" />
             </div>
           </div>
           <div className={styleModal.dataPoke}>
             <h1>{selectPoke.name}</h1>
-            {selectPoke.types.map((pokeType: PokeTypes) => (<h3 className={styles.typeColor} style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
-              {pokeType.type.name}
-            </h3>))}
+            <div className={styleModal.typesModal}>
+              {selectPoke.types.map((pokeType: PokeTypes) => (<h3 style={{ backgroundColor: checkType(pokeType.type.name as PokemonType) }} >
+                {pokeType.type.name}
+              </h3>))}
+            </div>
             <div>
-              <h3>Pokedex Number</h3>
+              <h2>Pokedex Number</h2>
               <p>{selectPoke.id}</p>
             </div>
             <div>
-              <h3>Height</h3>
+              <h2>Height</h2>
               <p>{selectPoke.height}</p>
             </div>
             <div>
-              <h3>Weight</h3>
+              <h2>Weight</h2>
               <p>{selectPoke.weight}</p>
             </div>
             <div>
-              <h3>Shiny</h3>
+              <h2>Shiny</h2>
               <div>
                 <img src={selectPoke.sprites.front_shiny} alt="" />
                 <img src={selectPoke.sprites.back_shiny} alt="" />

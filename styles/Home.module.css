@@ -167,6 +167,13 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+}
+
+.cardPokemon:focus,
+.cardPokemon:active,
+.cardPokemon:hover {
+  transform: scale(1.1);
 }
 
 .cardPokemon div img {
